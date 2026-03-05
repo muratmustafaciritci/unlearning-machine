@@ -1,6 +1,8 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 import streamlit as st
-import sys, types, os
+import sys
+import types
+import os
 from pathlib import Path
 
 ENCRYPTION_CONFIG = {"salt": b"unlearning_salt_v1_2024", "iterations": 600000}
@@ -10,14 +12,19 @@ class SecureModuleLoader:
         self.decryption_key = None
         self.loaded_modules = {}
         
-    def _derive_key(self, password: str):
+    def _derive_key(self, password):
         from cryptography.hazmat.primitives import hashes
         from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
         import base64
-        kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=ENCRYPTION_CONFIG["salt"], iterations=ENCRYPTION_CONFIG["iterations"])
+        kdf = PBKDF2HMAC(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=ENCRYPTION_CONFIG["salt"],
+            iterations=ENCRYPTION_CONFIG["iterations"]
+        )
         return base64.urlsafe_b64encode(kdf.derive(password.encode()))
     
-    def _decrypt_module(self, encrypted_data: bytes):
+    def _decrypt_module(self, encrypted_data):
         from cryptography.fernet import Fernet
         if not self.decryption_key:
             raise RuntimeError("Decryption key not initialized")
@@ -28,14 +35,16 @@ class SecureModuleLoader:
         code = parts[1].decode("utf-8") if len(parts) > 1 else ""
         return code
     
-    def initialize(self, password: str):
+    def initialize(self, password):
         self.decryption_key = self._derive_key(password)
         
-    def load_module_from_file(self, enc_path: str, module_name: str):
+    def load_module_from_file(self, enc_path, module_name):
         if module_name in self.loaded_modules:
             return self.loaded_modules[module_name]
+        
         with open(enc_path, "rb") as f:
             encrypted_data = f.read()
+        
         code = self._decrypt_module(encrypted_data)
         module = types.ModuleType(module_name)
         exec(code, module.__dict__)
@@ -56,7 +65,12 @@ def initialize_security():
 @st.cache_resource
 def load_core_modules():
     modules = {}
-    files = [("encrypted/core/engine.py.enc", "engine"), ("encrypted/core/therapy.py.enc", "therapy"), ("encrypted/ui/components.py.enc", "components")]
+    files = [
+        ("encrypted/core/engine.py.enc", "engine"),
+        ("encrypted/core/therapy.py.enc", "therapy"),
+        ("encrypted/core/user_system.py.enc", "user_system"),
+        ("encrypted/ui/components.py.enc", "components")
+    ]
     for file_path, name in files:
         with st.spinner(f"Loading {name}..."):
             module = _module_loader.load_module_from_file(file_path, name)
@@ -64,18 +78,31 @@ def load_core_modules():
     return modules
 
 def main():
-    st.set_page_config(page_title="Unlearning Machine", page_icon=":brain:", layout="wide")
+    st.set_page_config(
+        page_title="Unlearning Machine",
+        page_icon="🧠",
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
+    
     if not initialize_security():
         st.stop()
+    
     try:
         modules = load_core_modules()
     except Exception as e:
-        st.error(f"Error: {e}")
+        st.error(f"Error loading modules: {e}")
         st.stop()
+    
+    # Modülleri al
     engine = modules["engine"].get_engine()
     therapy = modules["therapy"]
+    user_manager = modules["user_system"].get_user_manager()
+    email_service = modules["user_system"].get_email_service()
     ui = modules["components"]
-    ui.render_main_interface(engine, therapy)
+    
+    # Ana arayüz
+    ui.render_main_interface(engine, therapy, user_manager, email_service)
 
 if __name__ == "__main__":
     main()

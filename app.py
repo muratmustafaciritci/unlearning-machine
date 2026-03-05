@@ -1,8 +1,6 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 import streamlit as st
-import sys
-import types
-import os
+import sys, types, os
 from pathlib import Path
 
 ENCRYPTION_CONFIG = {"salt": b"unlearning_salt_v1_2024", "iterations": 600000}
@@ -36,11 +34,8 @@ class SecureModuleLoader:
     def load_module_from_file(self, enc_path: str, module_name: str):
         if module_name in self.loaded_modules:
             return self.loaded_modules[module_name]
-        
-        # Dogrudan dosyadan oku
         with open(enc_path, "rb") as f:
             encrypted_data = f.read()
-        
         code = self._decrypt_module(encrypted_data)
         module = types.ModuleType(module_name)
         exec(code, module.__dict__)
@@ -55,17 +50,13 @@ def initialize_security():
         _module_loader.initialize(password)
         return True
     except Exception as e:
-        st.error(f"Security initialization failed: {e}")
+        st.error(f"Security error: {e}")
         return False
 
 @st.cache_resource
 def load_core_modules():
     modules = {}
-    files = [
-        ("encrypted/core/engine.py.enc", "engine"),
-        ("encrypted/core/therapy.py.enc", "therapy"),
-        ("encrypted/ui/components.py.enc", "components")
-    ]
+    files = [("encrypted/core/engine.py.enc", "engine"), ("encrypted/core/therapy.py.enc", "therapy"), ("encrypted/ui/components.py.enc", "components")]
     for file_path, name in files:
         with st.spinner(f"Loading {name}..."):
             module = _module_loader.load_module_from_file(file_path, name)
@@ -73,15 +64,14 @@ def load_core_modules():
     return modules
 
 def main():
-    st.set_page_config(page_title="Unlearning Machine", page_icon="🧠", layout="wide")
+    st.set_page_config(page_title="Unlearning Machine", page_icon=":brain:", layout="wide")
     if not initialize_security():
         st.stop()
     try:
         modules = load_core_modules()
     except Exception as e:
-        st.error(f"Critical error loading modules: {e}")
+        st.error(f"Error: {e}")
         st.stop()
-    
     engine = modules["engine"].get_engine()
     therapy = modules["therapy"]
     ui = modules["components"]

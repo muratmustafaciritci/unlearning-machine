@@ -31,7 +31,6 @@ class SecureModuleLoader:
         fernet = Fernet(self.decryption_key)
         decrypted = fernet.decrypt(encrypted_data)
         parts = decrypted.split(b"---CONTENT---\n")
-        header = parts[0].decode("utf-8")
         code = parts[1].decode("utf-8") if len(parts) > 1 else ""
         return code
     
@@ -62,7 +61,7 @@ def initialize_security():
         st.error(f"Security error: {e}")
         return False
 
-@st.cache_resource
+# Cache kaldırıldı - her zaman yeni yükle
 def load_core_modules():
     modules = {}
     files = [
@@ -72,9 +71,8 @@ def load_core_modules():
         ("encrypted/ui/components.py.enc", "components")
     ]
     for file_path, name in files:
-        with st.spinner(f"Loading {name}..."):
-            module = _module_loader.load_module_from_file(file_path, name)
-            modules[name] = module
+        module = _module_loader.load_module_from_file(file_path, name)
+        modules[name] = module
     return modules
 
 def main():
@@ -92,13 +90,22 @@ def main():
         modules = load_core_modules()
     except Exception as e:
         st.error(f"Error loading modules: {e}")
+        import traceback
+        st.code(traceback.format_exc())
         st.stop()
     
     # Modülleri al
     engine = modules["engine"].get_engine()
     therapy = modules["therapy"]
     user_manager = modules["user_system"].get_user_manager()
-    email_service = modules["user_system"].get_email_service()
+    
+    # Email service kontrolü
+    try:
+        email_service = modules["user_system"].get_email_service()
+    except AttributeError:
+        email_service = None
+        st.warning("Email service not available")
+    
     ui = modules["components"]
     
     # Ana arayüz

@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 import os
 import sys
 import base64
@@ -24,11 +24,14 @@ class SecureBuildSystem:
         return base64.urlsafe_b64encode(kdf.derive(password.encode()))
     
     def encrypt_file(self, src_path):
-        with open(src_path, "rb") as f:
-            content = f.read()
+        # BOM'suz oku
+        with open(src_path, "r", encoding="utf-8-sig") as f:
+            content = f.read().encode("utf-8")
+        
         relative_path = src_path.relative_to(self.src_dir)
-        metadata = f"PATH:{relative_path}\nSIZE:{len(content)}\n".encode()
+        metadata = f"PATH:{relative_path}\nSIZE:{len(content)}\n".encode("ascii")
         payload = metadata + b"---CONTENT---\n" + content
+        
         return self.cipher.encrypt(payload)
     
     def process_directory(self):

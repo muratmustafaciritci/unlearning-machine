@@ -1,39 +1,59 @@
-🧠 Unlearning Machine
-Nöral Yeniden Yapılandırma Protokolü
-Kişiselleştirilmiş terapi seansları ile olumsuz belleklerin dönüştürülmesi
-https://unlearning-machine.streamlit.app/
-🎯 Özellikler
-🎲 Dinamik Soru Sistemi: Kategoriye özel 100+ soru
-🎨 Görsel Sorular: Emoji tabanlı psikolojik testler
-✨ Sürpriz Sorular: Farkındalık molaları
-📊 İstatistikler: Gerçek zamanlı ilerleme takibi
-🧘 NLP Programlama: Seans sonu pozitif kodlama
-📄 Raporlama: JSON formatında indirilebilir raporlar
-🚀 Kurulum
-bash
-Copy
-git clone https://github.com/muratmustafaciritci/unlearning-machine.git
-cd unlearning-machine
+# 🧠 Unlearning Machine
+
+&gt; **Nöral Yeniden Yapılandırma Protokolü**  
+&gt; Kişiselleştirilmiş terapi seansları ile zihinsel dönüşüm
+
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://unlearning-machine.streamlit.app/)
+
+---
+
+## 🎯 Nedir?
+
+Unlearning Machine, bilişsel davranışçı terapi tekniklerini interaktif dijital deneyimle birleştiren kişisel gelişim aracıdır. Kullanıcıların olumsuz düşünce kalıplarını fark etmelerine ve dönüştürmelerine yardımcı olur.
+
+---
+
+## ✨ Özellikler
+
+- 🎨 **7 Farklı Kategori**: Travma, Fobi, Kaygı, Bağımlılık, İlişki, Özgüven, Kayıp
+- 🎲 **Dinamik Sorular**: Her seansta değişen kişiselleştirilmiş sorular
+- 🖼️ **Görsel Etkileşim**: Emoji tabanlı psikolojik testler
+- 📊 **İlerleme Takibi**: Gerçek zamanlı istatistikler ve grafikler
+- 🧘 **Bilinçli Farkındalık**: Nefes egzersizleri ve meditasyon molaları
+- 📄 **Seans Raporları**: Detaylı ilerleme analizi ve indirilebilir raporlar
+
+---
+
+## 🚀 Başlangıç
+
+```bash
 pip install -r requirements.txt
 streamlit run app.py
-🎮 Kullanım
-HEDEF sekmesinden kategori seçin ve şiddet belirleyin
-TERAPİ sekmesinde soruları yanıtlayın
-İSTATİSTİKLER sekmesinden ilerlemenizi görün
-Seans sonunda rapor indirin ve paylaşın
-📁 Kategoriler
-Table
-Kategori	Renk	İkon
-Travmatik Olay	🔴 Kırmızı	💥
-Fobi	🟠 Turuncu	😰
-Kaygı	🟡 Sarı	😰
-Bağımlılık	🟢 Yeşil	🔄
-İlişki	🔵 Mavi	💔
-Özgüven	🟣 Mor	🪞
-Kayıp	⚫ Gri	🕯️
+
+🎮 Nasıl Kullanılır?
+Kategori Seç: Kendini en iyi ifade eden temayı seç
+Şiddet Belirle: Duygu yoğunluğunu 1-10 arası belirle
+Seansı Başlat: Soruları yanıtla, görselleri seç
+İlerlemeni Gör: İstatistikler sekmesinden takip et
+Rapor Al: Seans sonu detaylı analizini indir
+
 🛡️ Gizlilik
-Tüm veriler yerel işlenir
-Sunucuya bilgi gönderilmez
-Anonim raporlama
-📝 Lisans
-MIT License - Murat Mustafa Çiritçi
+Tüm veriler yerel olarak işlenir
+Sunucuya kişisel bilgi gönderilmez
+Güvenli raporlama sistemi
+
+🧠 Bilimsel Temel
+Bilişsel Davranışçı Terapi (BDT)
+Nöro-Linguistik Programlama (NLP)
+Mindfulness (Bilinçli Farkındalık)
+Görselleştirme Teknikleri
+
+📝 Gereksinimler
+Python 3.8+
+Streamlit
+Pandas, NumPy, Plotly
+
+🤝 Geliştirici
+Murat Mustafa Çiritçi
+GitHub: @muratmustafaciritci
+⭐ Projeyi beğendiyseniz yıldız vermeyi unutmayın!

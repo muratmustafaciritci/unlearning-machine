@@ -81,6 +81,5 @@ https://www.muratciritci.com.tr
 
 📄 Lisans
 Bu proje MIT Lisansı altında lisanslanmıştır.
-<div align="center">
 ⭐ Projeyi beğendiyseniz yıldız vermeyi unutmayın!
 🧠 "Unlearning

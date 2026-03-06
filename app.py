@@ -50,7 +50,7 @@ def load_css():
     /* GİRİŞ EKRANI INPUT ALANLARI - SAYFA RENGİNDE ARKAPLAN, SİYAH YAZI */
     div[data-testid="stVerticalBlock"] div[data-testid="stHorizontalBlock"] .stTextInput input {
         background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #16213e 100%) !important;
-        color: #000000 !important;
+        color: #FFFFFF !important;
         border: 2px solid rgba(0, 212, 255, 0.3) !important;
         border-radius: 10px !important;
         padding: 12px 16px !important;

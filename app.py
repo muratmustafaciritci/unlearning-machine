@@ -47,21 +47,24 @@ def load_css():
     .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.5); color: #a0a0a0 !important; text-align: center; padding: 1rem; font-size: 0.9rem; z-index: 1000; }
     .footer a { color: #00d4ff !important; text-decoration: none; }
     
-    /* GİRİŞ EKRANI ETİKETLERİ - DÜZELTİLMİŞ */
-    div[data-testid="stVerticalBlock"] > div > div > div > div > label {
-        color: #00d4ff !important;
+    /* GİRİŞ EKRANI INPUT ALANLARI - SAYFA RENGİNDE ARKAPLAN */
+    .entry-input .stTextInput > div > div > input {
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #16213e 100%) !important;
+        color: #ffffff !important;
+        border: 2px solid rgba(0, 212, 255, 0.3) !important;
+        border-radius: 10px !important;
+        padding: 12px 16px !important;
         font-size: 1rem !important;
-        font-weight: 600 !important;
     }
     
-    /* Alternatif etiket stili */
-    .input-label {
-        color: #00d4ff !important;
-        font-size: 1rem !important;
-        font-weight: 700 !important;
-        margin-bottom: 8px !important;
-        display: block !important;
-        text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+    .entry-input .stTextInput > div > div > input:focus {
+        border-color: #00d4ff !important;
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.3) !important;
+    }
+    
+    /* Placeholder rengi */
+    .entry-input .stTextInput > div > div > input::placeholder {
+        color: rgba(255, 255, 255, 0.4) !important;
     }
     
     /* EXPANDER İÇİ DÜZENLEMELER */
@@ -91,11 +94,6 @@ def load_css():
         border-radius: 4px !important;
         font-weight: 600 !important;
     }
-    
-    /* JSON anahtarları için özel renk */
-    .json-key { color: #9d4edd !important; }
-    .json-string { color: #00ff88 !important; }
-    .json-number { color: #ff9f1c !important; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -264,7 +262,7 @@ def main():
     load_css()
     init_session()
     
-    # GİRİŞ EKRANI - DÜZELTİLMİŞ
+    # GİRİŞ EKRANI - DÜZELTİLMİŞ INPUT ALANLARI
     if not st.session_state.user:
         st.markdown("<h1 class='main-title'>🧠 UNLEARNING MACHINE</h1>", unsafe_allow_html=True)
         st.markdown("<p class='subtitle'>NÖRAL YENİDEN YAPILANDIRMA PROTOKOLÜ</p>", unsafe_allow_html=True)
@@ -273,13 +271,18 @@ def main():
         st.markdown("<h3 style='color: #00d4ff !important;'>👤 Hoş Geldiniz</h3>", unsafe_allow_html=True)
         st.markdown("<p style='color: #ffffff !important; margin-bottom: 20px;'>Devam etmek için bilgilerinizi girin:</p>", unsafe_allow_html=True)
         
+        # Input alanları için özel container
+        st.markdown("<div class='entry-input'>", unsafe_allow_html=True)
+        
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown("<div style='margin-bottom: 5px;'><span style='color: #00d4ff; font-size: 1rem; font-weight: 700; text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);'>👤 İsminiz:</span></div>", unsafe_allow_html=True)
+            st.markdown("<div style='margin-bottom: 8px;'><span style='color: #00d4ff; font-size: 1rem; font-weight: 700;'>👤 İsminiz:</span></div>", unsafe_allow_html=True)
             name = st.text_input("İsminiz", placeholder="örn: Ahmet", label_visibility="collapsed", key="name_input")
         with col2:
-            st.markdown("<div style='margin-bottom: 5px;'><span style='color: #00d4ff; font-size: 1rem; font-weight: 700; text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);'>📧 E-posta:</span></div>", unsafe_allow_html=True)
+            st.markdown("<div style='margin-bottom: 8px;'><span style='color: #00d4ff; font-size: 1rem; font-weight: 700;'>📧 E-posta:</span></div>", unsafe_allow_html=True)
             email = st.text_input("E-posta", placeholder="ornek@email.com", label_visibility="collapsed", key="email_input")
+        
+        st.markdown("</div>", unsafe_allow_html=True)  # entry-input kapat
         
         if st.button("🚀 BAŞLA", use_container_width=True):
             if name.strip() and email.strip():
@@ -289,7 +292,7 @@ def main():
             else:
                 st.error("Lütfen tüm alanları doldurun.")
         
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)  # question-card kapat
         
         st.markdown("<div class='footer'>Geliştirici: <a href='https://www.muratciritci.com.tr ' target='_blank'>Murat Mustafa Ciritçi</a> | www.muratciritci.com.tr</div>", unsafe_allow_html=True)
         return

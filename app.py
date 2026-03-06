@@ -19,39 +19,145 @@ def encrypt_data(data):
     cipher = get_cipher()
     return cipher.encrypt(json.dumps(data, ensure_ascii=False).encode()).decode()
 
-st.set_page_config(page_title="Unlearning Machine", page_icon="🧠", layout="wide")
+st.set_page_config(page_title="Unlearning Machine", page_icon="🧠", layout="wide", initial_sidebar_state="expanded")
 
 def load_css():
     st.markdown("""
     <style>
-    .stApp { background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #16213e 100%); color: #ffffff !important; }
-    .stApp, .stApp p, .stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp label { color: #ffffff !important; }
-    .stTextInput>div>div>input, .stTextArea>div>div>textarea { background: rgba(255,255,255,0.1) !important; color: #ffffff !important; }
-    .main-title { text-align: center; background: linear-gradient(90deg, #00d4ff, #7b2cbf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 3rem; font-weight: 700; }
-    .subtitle { text-align: center; color: #a0a0a0 !important; font-size: 1.1rem; margin-bottom: 2rem; }
-    .stButton>button { background: linear-gradient(90deg, #ff006e, #8338ec) !important; color: white !important; border-radius: 10px !important; padding: 0.75rem !important; width: 100% !important; }
-    .question-card { background: rgba(255,255,255,0.1) !important; border-radius: 20px; padding: 2rem; margin: 1rem 0; border: 1px solid rgba(255,255,255,0.2); }
-    .question-card h3 { color: #ffffff !important; }
-    .nlp-card { background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(123,44,191,0.2)); border-radius: 20px; padding: 2rem; text-align: center; border: 2px solid rgba(0,212,255,0.5); animation: pulse 3s infinite; }
-    @keyframes pulse { 0%, 100% { box-shadow: 0 0 20px rgba(0,212,255,0.3); } 50% { box-shadow: 0 0 40px rgba(0,212,255,0.6); } }
+    /* TEMEL ARKAPLAN */
+    .stApp {
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #16213e 100%);
+    }
+    
+    /* SIDEBAR - Koyu tema */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%) !important;
+    }
+    
+    [data-testid="stSidebar"] * {
+        color: #ffffff !important;
+    }
+    
+    /* TÜM YAZILAR BEYAZ */
+    .stApp, .stApp p, .stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp h5, .stApp h6,
+    .stApp label, .stApp span {
+        color: #ffffff !important;
+    }
+    
+    /* BAŞLIK - Düz mavi */
+    .main-title {
+        text-align: center;
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #00d4ff !important;
+        text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+    }
+    
+    .subtitle {
+        text-align: center;
+        color: #a0a0a0 !important;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+    
+    /* INPUT ALANLARI - Koyu arka plan */
+    .stTextInput>div>div>input, .stTextArea>div>div>textarea {
+        background: rgba(255,255,255,0.05) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        border-radius: 10px !important;
+    }
+    
+    /* SELECTBOX */
+    .stSelectbox>div>div {
+        background: rgba(255,255,255,0.05) !important;
+        color: #ffffff !important;
+        border-radius: 10px !important;
+    }
+    
+    /* BUTONLAR */
+    .stButton>button {
+        background: linear-gradient(90deg, #ff006e, #8338ec) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 10px !important;
+        padding: 0.75rem !important;
+        width: 100% !important;
+        font-weight: 600 !important;
+    }
+    
+    /* KARTLAR */
+    .question-card {
+        background: rgba(255,255,255,0.05) !important;
+        border-radius: 20px;
+        padding: 2rem;
+        margin: 1rem 0;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .question-card h3, .question-card h4 {
+        color: #ffffff !important;
+    }
+    
+    /* NLP KART */
+    .nlp-card {
+        background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(123,44,191,0.1));
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        border: 1px solid rgba(0,212,255,0.3);
+        margin: 1rem 0;
+    }
+    
+    /* SEKMELER */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 2rem;
+        background: rgba(255,255,255,0.03);
+        padding: 1rem;
+        border-radius: 15px;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        color: #ffffff !important;
+    }
+    
+    /* EXPANDER */
+    .streamlit-expanderHeader {
+        background: rgba(255,255,255,0.05) !important;
+        color: #ffffff !important;
+        border-radius: 10px !important;
+    }
+    
+    /* FOOTER */
+    .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(0,0,0,0.5);
+        color: #a0a0a0 !important;
+        text-align: center;
+        padding: 1rem;
+        font-size: 0.9rem;
+        z-index: 1000;
+    }
+    
+    .footer a {
+        color: #00d4ff !important;
+        text-decoration: none;
+    }
     </style>
     """, unsafe_allow_html=True)
 
 CATEGORIES = {
-    "Travmatik Olay": {"color": "#FF4757", "icon": "💥", "desc": "Geçmiş travmatik deneyimler", 
-                       "images": ["https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400", "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400"]},
-    "Fobi": {"color": "#FF6348", "icon": "😰", "desc": "İrrasyonel korkular",
-             "images": ["https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=400", "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400"]},
-    "Kaygı": {"color": "#FFA502", "icon": "😰", "desc": "Anksiyete ve endişe",
-              "images": ["https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400", "https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=400"]},
-    "Bağımlılık": {"color": "#2ED573", "icon": "🔄", "desc": "Bağımlılık davranışları",
-                   "images": ["https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?w=400", "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=400"]},
-    "İlişki": {"color": "#1E90FF", "icon": "💔", "desc": "İlişki sorunları",
-               "images": ["https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=400", "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=400"]},
-    "Özgüven": {"color": "#A55EEA", "icon": "🪞", "desc": "Benlik saygısı",
-                "images": ["https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400", "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400"]},
-    "Kayıp": {"color": "#747D8C", "icon": "🕯️", "desc": "Yas ve kayıp süreci",
-              "images": ["https://images.unsplash.com/photo-1519834785169-98be25ec3f84?w=400", "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=400"]}
+    "Travmatik Olay": {"color": "#FF4757", "icon": "💥", "desc": "Geçmiş travmatik deneyimler"},
+    "Fobi": {"color": "#FF6348", "icon": "😰", "desc": "İrrasyonel korkular"},
+    "Kaygı": {"color": "#FFA502", "icon": "😰", "desc": "Anksiyete ve endişe"},
+    "Bağımlılık": {"color": "#2ED573", "icon": "🔄", "desc": "Bağımlılık davranışları"},
+    "İlişki": {"color": "#1E90FF", "icon": "💔", "desc": "İlişki sorunları"},
+    "Özgüven": {"color": "#A55EEA", "icon": "🪞", "desc": "Benlik saygısı"},
+    "Kayıp": {"color": "#747D8C", "icon": "🕯️", "desc": "Yas ve kayıp süreci"}
 }
 
 QUESTION_BANK = {
@@ -94,19 +200,21 @@ QUESTION_BANK = {
 }
 
 NLP_MESSAGES = {
-    "Travmatik Olay": ["Geçmişiniz sizi tanımlamaz, sadece güçlendirir.", "Hayatta kaldınız, şimdi yaşayın.", "Her yaradan gelen ışık daha parlaktır."],
-    "Fobi": ["Korku sadece bir düşüncedir.", "Cesaret korkuya rağmen hareket etmektir.", "Sınırlarınız zihninizdedir."],
-    "Kaygı": ["Gelecek hayal ürünüdür, şimdi gerçektir.", "Nefes alın, şu an güvendesiniz.", "Endişe geçicidir."],
-    "Bağımlılık": ["Her an yeni bir başlangıçtır.", "Kontrol sizdedir.", "Özgürlük seçimdir."],
-    "İlişki": ["Kendi sevginiz en önemlisidir.", "Sağlıklı sınırlar sağlıklı sevgidir.", "Yalnızlık kötü bir ilişkiden iyidir."],
-    "Özgüven": ["Yeterlisiniz, olduğunuz gibi.", "Mükemmel olmak zorunda değilsiniz.", "Kendinizin en iyi versiyonusunuz."],
-    "Kayıp": ["Aşk kaybolmaz, sadece şekil değiştirir.", "Yas sevginin devamıdır.", "Anılar kalpte yaşar."]
+    "Travmatik Olay": ["Geçmişiniz sizi tanımlamaz, sadece güçlendirir.", "Hayatta kaldınız, şimdi yaşayın."],
+    "Fobi": ["Korku sadece bir düşüncedir.", "Cesaret korkuya rağmen hareket etmektir."],
+    "Kaygı": ["Gelecek hayal ürünüdür, şimdi gerçektir.", "Nefes alın, şu an güvendesiniz."],
+    "Bağımlılık": ["Her an yeni bir başlangıçtır.", "Kontrol sizdedir, her zaman."],
+    "İlişki": ["Kendi sevginiz en önemlisidir.", "Yalnızlık kötü bir ilişkiden iyidir."],
+    "Özgüven": ["Yeterlisiniz, olduğunuz gibi.", "Mükemmel olmak zorunda değilsiniz."],
+    "Kayıp": ["Aşk kaybolmaz, sadece şekil değiştirir.", "Anılar kalpte yaşar."]
 }
 
 def init_session():
-    defaults = {'user': "", 'user_email': "", 'category': None, 'intensity': 5, 'started': False,
-                'questions': [], 'answers': [], 'idx': 0, 'complete': False,
-                'visual': [], 'progress_data': [], 'show_report': False}
+    defaults = {
+        'user': "", 'user_email': "", 'category': None, 'intensity': 5, 'started': False,
+        'questions': [], 'answers': [], 'idx': 0, 'complete': False,
+        'visual': [], 'progress_data': [], 'show_report': False
+    }
     for k, v in defaults.items():
         if k not in st.session_state:
             st.session_state[k] = v
@@ -145,13 +253,16 @@ def main():
                 st.error("Lütfen tüm alanları doldurun.")
         
         st.markdown("</div>", unsafe_allow_html=True)
+        
+        # Footer
+        st.markdown("<div class='footer'>Geliştirici: <a href='https://www.muratciritci.com.tr' target='_blank'>Murat Mustafa Ciritçi</a> | www.muratciritci.com.tr</div>", unsafe_allow_html=True)
         return
     
-    # Sidebar
+    # SIDEBAR
     with st.sidebar:
-        st.markdown("<h2 style='text-align: center; color: #ffffff !important;'>🧠 KONTROL PANELİ</h2>", unsafe_allow_html=True)
-        st.markdown(f"<p style='text-align: center; color: #ffffff !important;'>👤 {st.session_state.user}</p>", unsafe_allow_html=True)
-        st.markdown(f"<p style='text-align: center; color: #a0a0a0 !important; font-size: 0.8rem;'>{st.session_state.user_email}</p>", unsafe_allow_html=True)
+        st.markdown("<h2 style='color: #00d4ff !important; text-align: center;'>🧠 KONTROL PANELİ</h2>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: #ffffff !important; text-align: center;'>👤 {st.session_state.user}</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: #a0a0a0 !important; text-align: center; font-size: 0.8rem;'>{st.session_state.user_email}</p>", unsafe_allow_html=True)
         st.markdown("---")
         
         if st.button("🆕 YENİ SEANS", use_container_width=True):
@@ -163,12 +274,18 @@ def main():
             if st.session_state.complete:
                 st.session_state.show_report = True
                 st.rerun()
+            else:
+                st.info("Aktif seans yok.")
         
         if st.button("🚪 ÇIKIŞ", use_container_width=True):
             st.session_state.user = ""
             st.session_state.user_email = ""
             st.rerun()
+        
+        st.markdown("---")
+        st.markdown("<p style='color: #a0a0a0 !important; font-size: 0.8rem; text-align: center;'>Geliştirici:<br><a href='https://www.muratciritci.com.tr' target='_blank' style='color: #00d4ff !important;'>Murat Mustafa Ciritçi</a></p>", unsafe_allow_html=True)
     
+    # HEADER
     st.markdown("<h1 class='main-title'>🧠 UNLEARNING MACHINE</h1>", unsafe_allow_html=True)
     st.markdown("<p class='subtitle'>NÖRAL YENİDEN YAPILANDIRMA PROTOKOLÜ</p>", unsafe_allow_html=True)
     
@@ -184,13 +301,13 @@ def main():
             st.markdown("<div class='question-card'>", unsafe_allow_html=True)
             col1, col2 = st.columns(2)
             with col1:
-                st.markdown("<h4 style='color: #ffffff !important;'>KATEGORİ</h4>", unsafe_allow_html=True)
+                st.markdown("<h4>KATEGORİ</h4>", unsafe_allow_html=True)
                 cat = st.selectbox("", list(CATEGORIES.keys()), format_func=lambda x: f"{CATEGORIES[x]['icon']} {x}", label_visibility="collapsed")
                 st.session_state.category = cat
                 color = CATEGORIES[cat]['color']
-                st.markdown(f"<div style='background: {color}20; border-left: 4px solid {color}; padding: 1rem; border-radius: 0 10px 10px 0;'><strong style='color: {color};'>{CATEGORIES[cat]['desc']}</strong></div>", unsafe_allow_html=True)
+                st.markdown(f"<div style='background: {color}20; border-left: 4px solid {color}; padding: 1rem; border-radius: 0 10px 10px 0; margin-top: 1rem;'><strong style='color: {color};'>{CATEGORIES[cat]['desc']}</strong></div>", unsafe_allow_html=True)
             with col2:
-                st.markdown("<h4 style='color: #ffffff !important;'>DUYGU ŞİDDETİ</h4>", unsafe_allow_html=True)
+                st.markdown("<h4>DUYGU ŞİDDETİ</h4>", unsafe_allow_html=True)
                 intensity = st.slider("", 1, 10, st.session_state.intensity, label_visibility="collapsed")
                 st.session_state.intensity = intensity
                 st.markdown(f"<h2 style='text-align: center; color: {color};'>{intensity}/10</h2>", unsafe_allow_html=True)
@@ -275,26 +392,30 @@ def main():
                 fig.update_traces(line_color='#00d4ff')
                 fig.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', font_color='white')
                 st.plotly_chart(fig, use_container_width=True)
+            
+            if st.session_state.answers:
+                st.markdown("<h3 style='color: #ffffff !important;'>📝 Yanıtlar</h3>", unsafe_allow_html=True)
+                for i, a in enumerate(st.session_state.answers, 1):
+                    with st.expander(f"Soru {i}"):
+                        st.write(f"**Soru:** {a['q']}")
+                        st.write(f"**Yanıt:** {a['a']}")
         else:
             st.info("Henüz veri yok.")
+    
+    # Footer
+    st.markdown("<div class='footer'>Geliştirici: <a href='https://www.muratciritci.com.tr' target='_blank'>Murat Mustafa Ciritçi</a> | www.muratciritci.com.tr</div>", unsafe_allow_html=True)
 
 def show_nlp_screen():
-    """NLP Ekranı - Resimli"""
+    """NLP Ekranı - Hatasız"""
     cat = st.session_state.category
     msgs = NLP_MESSAGES.get(cat, ["Güçlüsünüz."])
-    images = CATEGORIES[cat]['images']
     
     st.markdown("<div style='text-align: center; padding: 2rem 0;'>", unsafe_allow_html=True)
     st.markdown("<h1 style='color: #00d4ff !important;'>🧘 NÖRAL YENİDEN YAPILANDIRMA</h1>", unsafe_allow_html=True)
     st.markdown("<p style='color: #a0a0a0 !important;'>Şimdi ekrana odaklanın...</p>", unsafe_allow_html=True)
     
-    for i, (msg, img) in enumerate(zip(msgs, images)):
-        cols = st.columns([1, 2])
-        with cols[0]:
-            st.image(img, use_container_width=True)
-        with cols[1]:
-            st.markdown(f"<div class='nlp-card'><h2 style='color: #00d4ff !important;'>✨ {msg}</h2></div>", unsafe_allow_html=True)
-        st.markdown("<hr style='border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+    for msg in msgs:
+        st.markdown(f"<div class='nlp-card'><h2 style='color: #00d4ff !important;'>✨ {msg}</h2></div>", unsafe_allow_html=True)
     
     if st.button("📊 SEANSI BİTİR VE RAPOR AL", use_container_width=True):
         st.session_state.show_report = True

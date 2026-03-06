@@ -47,17 +47,55 @@ def load_css():
     .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.5); color: #a0a0a0 !important; text-align: center; padding: 1rem; font-size: 0.9rem; z-index: 1000; }
     .footer a { color: #00d4ff !important; text-decoration: none; }
     
-    /* GİRİŞ EKRANI ETİKETLERİ İÇİN EK CSS */
-    .entry-label { color: #00d4ff !important; font-size: 1rem !important; font-weight: 600 !important; margin-bottom: 5px !important; display: block !important; }
-    .entry-label strong { color: #00d4ff !important; }
+    /* GİRİŞ EKRANI ETİKETLERİ - DÜZELTİLMİŞ */
+    div[data-testid="stVerticalBlock"] > div > div > div > div > label {
+        color: #00d4ff !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+    }
     
-    /* EXPANDER İÇİNDEKİ JSON VE METİN RENKLERİ */
-    .streamlit-expanderContent pre { color: #00d4ff !important; background: rgba(0,0,0,0.3) !important; }
-    .streamlit-expanderContent code { color: #00d4ff !important; background: rgba(0,0,0,0.3) !important; }
-    .streamlit-expanderContent .stJson { color: #ffffff !important; }
-    .streamlit-expanderContent p { color: #ffffff !important; }
-    .streamlit-expanderContent span { color: #ffffff !important; }
-    .streamlit-expanderContent div { color: #ffffff !important; }
+    /* Alternatif etiket stili */
+    .input-label {
+        color: #00d4ff !important;
+        font-size: 1rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 8px !important;
+        display: block !important;
+        text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+    }
+    
+    /* EXPANDER İÇİ DÜZENLEMELER */
+    .streamlit-expanderContent {
+        background: rgba(20, 20, 40, 0.95) !important;
+        border: 1px solid rgba(0, 212, 255, 0.2) !important;
+    }
+    
+    .streamlit-expanderContent pre {
+        color: #00ff88 !important;
+        background: rgba(0, 0, 0, 0.6) !important;
+        padding: 20px !important;
+        border-radius: 8px !important;
+        border-left: 4px solid #00d4ff !important;
+        font-family: 'Courier New', monospace !important;
+        font-size: 13px !important;
+        line-height: 1.6 !important;
+        white-space: pre-wrap !important;
+        word-wrap: break-word !important;
+        overflow-x: auto !important;
+    }
+    
+    .streamlit-expanderContent code {
+        color: #ff6b9d !important;
+        background: rgba(255, 107, 157, 0.1) !important;
+        padding: 2px 6px !important;
+        border-radius: 4px !important;
+        font-weight: 600 !important;
+    }
+    
+    /* JSON anahtarları için özel renk */
+    .json-key { color: #9d4edd !important; }
+    .json-string { color: #00ff88 !important; }
+    .json-number { color: #ff9f1c !important; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -198,26 +236,50 @@ def reset_session():
     st.session_state.category = None
     st.session_state.intensity = 5
 
+def format_json_pretty(data):
+    """JSON'u renkli ve okunabilir formata çevir"""
+    json_str = json.dumps(data, ensure_ascii=False, indent=2)
+    
+    # Syntax highlighting için basit HTML dönüşümü
+    formatted = json_str.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+    
+    # Anahtarlar (tırnak içindeki metinlerden önceki kısımlar)
+    import re
+    
+    # String değerleri yeşil yap
+    formatted = re.sub(r'(".*?"):', r'<span style="color: #9d4edd; font-weight: bold;">\1</span>:', formatted)
+    
+    # String değerleri yeşil yap
+    formatted = re.sub(r': (".*?")([,\n])', r': <span style="color: #00ff88;">\1</span>\2', formatted)
+    
+    # Sayıları turuncu yap
+    formatted = re.sub(r': (\d+)([,\n])', r': <span style="color: #ff9f1c; font-weight: bold;">\1</span>\2', formatted)
+    
+    # Boolean ve null değerleri pembe yap
+    formatted = re.sub(r': (true|false|null)([,\n])', r': <span style="color: #ff006e; font-weight: bold;">\1</span>\2', formatted)
+    
+    return formatted
+
 def main():
     load_css()
     init_session()
     
-    # GİRİŞ EKRANI
+    # GİRİŞ EKRANI - DÜZELTİLMİŞ
     if not st.session_state.user:
         st.markdown("<h1 class='main-title'>🧠 UNLEARNING MACHINE</h1>", unsafe_allow_html=True)
         st.markdown("<p class='subtitle'>NÖRAL YENİDEN YAPILANDIRMA PROTOKOLÜ</p>", unsafe_allow_html=True)
         
         st.markdown("<div class='question-card'>", unsafe_allow_html=True)
         st.markdown("<h3 style='color: #00d4ff !important;'>👤 Hoş Geldiniz</h3>", unsafe_allow_html=True)
-        st.markdown("<p style='color: #ffffff !important;'>Devam etmek için bilgilerinizi girin:</p>", unsafe_allow_html=True)
+        st.markdown("<p style='color: #ffffff !important; margin-bottom: 20px;'>Devam etmek için bilgilerinizi girin:</p>", unsafe_allow_html=True)
         
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown("<span class='entry-label'><strong>İsminiz:</strong></span>", unsafe_allow_html=True)
-            name = st.text_input("", placeholder="örn: Ahmet", label_visibility="collapsed", key="name_input")
+            st.markdown("<div style='margin-bottom: 5px;'><span style='color: #00d4ff; font-size: 1rem; font-weight: 700; text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);'>👤 İsminiz:</span></div>", unsafe_allow_html=True)
+            name = st.text_input("İsminiz", placeholder="örn: Ahmet", label_visibility="collapsed", key="name_input")
         with col2:
-            st.markdown("<span class='entry-label'><strong>E-posta:</strong></span>", unsafe_allow_html=True)
-            email = st.text_input("", placeholder="ornek@email.com", label_visibility="collapsed", key="email_input")
+            st.markdown("<div style='margin-bottom: 5px;'><span style='color: #00d4ff; font-size: 1rem; font-weight: 700; text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);'>📧 E-posta:</span></div>", unsafe_allow_html=True)
+            email = st.text_input("E-posta", placeholder="ornek@email.com", label_visibility="collapsed", key="email_input")
         
         if st.button("🚀 BAŞLA", use_container_width=True):
             if name.strip() and email.strip():
@@ -452,13 +514,13 @@ def show_report_screen():
         if st.button("📧 E-POSTA", use_container_width=True):
             st.success(f"📧 {st.session_state.user_email} adresine gönderildi!")
     
-    # DÜZELTİLMİŞ EXPANDER - JSON RENKLERİ AYARLANDI
+    # DÜZELTİLMİŞ EXPANDER - RENKLİ VE DÜZENLİ JSON
     with st.expander("📋 Detayları Gör"):
-        st.markdown("<div style='background: rgba(0,0,0,0.5); border-radius: 10px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+        st.markdown("<div style='background: rgba(20, 20, 40, 0.95); border-radius: 10px; padding: 20px; border: 1px solid rgba(0, 212, 255, 0.3);'>", unsafe_allow_html=True)
         
-        # JSON'u özel formatta göster - tüm metinler beyaz olacak
-        report_json = json.dumps(report, ensure_ascii=False, indent=2)
-        st.markdown(f"<pre style='color: #00d4ff !important; background: rgba(0,0,0,0.3) !important; padding: 1rem; border-radius: 5px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;'>{report_json}</pre>", unsafe_allow_html=True)
+        # Renkli JSON gösterimi
+        formatted_json = format_json_pretty(report)
+        st.markdown(f"<pre style='margin: 0; padding: 0; background: transparent; border: none;'>{formatted_json}</pre>", unsafe_allow_html=True)
         
         st.markdown("</div>", unsafe_allow_html=True)
     

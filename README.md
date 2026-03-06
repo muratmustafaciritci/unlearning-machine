@@ -83,5 +83,4 @@ https://www.muratciritci.com.tr
 Bu proje MIT Lisansı altında lisanslanmıştır.
 <div align="center">
 ⭐ Projeyi beğendiyseniz yıldız vermeyi unutmayın!
-🧠 "Unlearning is the highest form of learning." — Jiddu Krishnamurti
-</div>
+🧠 "Unlearning

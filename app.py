@@ -46,6 +46,18 @@ def load_css():
     .stJson { background: rgba(0,0,0,0.5) !important; border-radius: 10px !important; padding: 1rem !important; }
     .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.5); color: #a0a0a0 !important; text-align: center; padding: 1rem; font-size: 0.9rem; z-index: 1000; }
     .footer a { color: #00d4ff !important; text-decoration: none; }
+    
+    /* GİRİŞ EKRANI ETİKETLERİ İÇİN EK CSS */
+    .entry-label { color: #00d4ff !important; font-size: 1rem !important; font-weight: 600 !important; margin-bottom: 5px !important; display: block !important; }
+    .entry-label strong { color: #00d4ff !important; }
+    
+    /* EXPANDER İÇİNDEKİ JSON VE METİN RENKLERİ */
+    .streamlit-expanderContent pre { color: #00d4ff !important; background: rgba(0,0,0,0.3) !important; }
+    .streamlit-expanderContent code { color: #00d4ff !important; background: rgba(0,0,0,0.3) !important; }
+    .streamlit-expanderContent .stJson { color: #ffffff !important; }
+    .streamlit-expanderContent p { color: #ffffff !important; }
+    .streamlit-expanderContent span { color: #ffffff !important; }
+    .streamlit-expanderContent div { color: #ffffff !important; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -201,10 +213,10 @@ def main():
         
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown("<p style='color: #00d4ff !important; margin-bottom: 5px;'><strong>İsminiz:</strong></p>", unsafe_allow_html=True)
+            st.markdown("<span class='entry-label'><strong>İsminiz:</strong></span>", unsafe_allow_html=True)
             name = st.text_input("", placeholder="örn: Ahmet", label_visibility="collapsed", key="name_input")
         with col2:
-            st.markdown("<p style='color: #00d4ff !important; margin-bottom: 5px;'><strong>E-posta:</strong></p>", unsafe_allow_html=True)
+            st.markdown("<span class='entry-label'><strong>E-posta:</strong></span>", unsafe_allow_html=True)
             email = st.text_input("", placeholder="ornek@email.com", label_visibility="collapsed", key="email_input")
         
         if st.button("🚀 BAŞLA", use_container_width=True):
@@ -217,7 +229,7 @@ def main():
         
         st.markdown("</div>", unsafe_allow_html=True)
         
-        st.markdown("<div class='footer'>Geliştirici: <a href='https://www.muratciritci.com.tr' target='_blank'>Murat Mustafa Ciritçi</a> | www.muratciritci.com.tr</div>", unsafe_allow_html=True)
+        st.markdown("<div class='footer'>Geliştirici: <a href='https://www.muratciritci.com.tr ' target='_blank'>Murat Mustafa Ciritçi</a> | www.muratciritci.com.tr</div>", unsafe_allow_html=True)
         return
     
     # SIDEBAR
@@ -244,7 +256,7 @@ def main():
             st.rerun()
         
         st.markdown("---")
-        st.markdown("<p style='color: #a0a0a0 !important; font-size: 0.8rem; text-align: center;'>Geliştirici:<br><a href='https://www.muratciritci.com.tr' target='_blank' style='color: #00d4ff !important;'>Murat Mustafa Ciritçi</a></p>", unsafe_allow_html=True)
+        st.markdown("<p style='color: #a0a0a0 !important; font-size: 0.8rem; text-align: center;'>Geliştirici:<br><a href='https://www.muratciritci.com.tr ' target='_blank' style='color: #00d4ff !important;'>Murat Mustafa Ciritçi</a></p>", unsafe_allow_html=True)
     
     # HEADER
     st.markdown("<h1 class='main-title'>🧠 UNLEARNING MACHINE</h1>", unsafe_allow_html=True)
@@ -381,7 +393,7 @@ def main():
         else:
             st.info("Henüz veri yok.")
     
-    st.markdown("<div class='footer'>Geliştirici: <a href='https://www.muratciritci.com.tr' target='_blank'>Murat Mustafa Ciritçi</a> | www.muratciritci.com.tr</div>", unsafe_allow_html=True)
+    st.markdown("<div class='footer'>Geliştirici: <a href='https://www.muratciritci.com.tr ' target='_blank'>Murat Mustafa Ciritçi</a> | www.muratciritci.com.tr</div>", unsafe_allow_html=True)
 
 def show_nlp_screen():
     """NLP Ekranı"""
@@ -434,15 +446,20 @@ def show_report_screen():
     with col2:
         if st.button("🔗 PAYLAŞ", use_container_width=True):
             share_code = encrypted[:50]
-            st.markdown(f"<div style='background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 10px; padding: 1rem; margin-top: 1rem;'><code style='color: #00d4ff !important; font-size: 0.9rem;'>https://unlearning-machine.streamlit.app/?r={share_code}...</code></div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 10px; padding: 1rem; margin-top: 1rem;'><code style='color: #00d4ff !important; font-size: 0.9rem;'>https://unlearning-machine.streamlit.app/?r= {share_code}...</code></div>", unsafe_allow_html=True)
             st.success("Link oluşturuldu!")
     with col3:
         if st.button("📧 E-POSTA", use_container_width=True):
             st.success(f"📧 {st.session_state.user_email} adresine gönderildi!")
     
+    # DÜZELTİLMİŞ EXPANDER - JSON RENKLERİ AYARLANDI
     with st.expander("📋 Detayları Gör"):
-        st.markdown(f"<div style='background: rgba(0,0,0,0.5); border-radius: 10px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
-        st.json(report)
+        st.markdown("<div style='background: rgba(0,0,0,0.5); border-radius: 10px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+        
+        # JSON'u özel formatta göster - tüm metinler beyaz olacak
+        report_json = json.dumps(report, ensure_ascii=False, indent=2)
+        st.markdown(f"<pre style='color: #00d4ff !important; background: rgba(0,0,0,0.3) !important; padding: 1rem; border-radius: 5px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;'>{report_json}</pre>", unsafe_allow_html=True)
+        
         st.markdown("</div>", unsafe_allow_html=True)
     
     if st.button("🔄 YENİ SEANS BAŞLAT", use_container_width=True):

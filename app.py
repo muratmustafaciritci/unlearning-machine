@@ -5,11 +5,9 @@ from datetime import datetime
 import random
 import json
 import base64
-from io import BytesIO
 from cryptography.fernet import Fernet
 import hashlib
 
-# Şifreleme anahtarı
 CRYPTO_KEY = "brkliuotrum"
 
 def get_cipher():
@@ -19,114 +17,46 @@ def get_cipher():
 
 def encrypt_data(data):
     cipher = get_cipher()
-    json_data = json.dumps(data, ensure_ascii=False)
-    return cipher.encrypt(json_data.encode()).decode()
+    return cipher.encrypt(json.dumps(data, ensure_ascii=False).encode()).decode()
 
-def decrypt_data(encrypted_data):
-    try:
-        cipher = get_cipher()
-        decrypted = cipher.decrypt(encrypted_data.encode())
-        return json.loads(decrypted.decode())
-    except:
-        return None
-
-st.set_page_config(page_title="Unlearning Machine", page_icon="🧠", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Unlearning Machine", page_icon="🧠", layout="wide")
 
 def load_css():
     st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-    
-    * { font-family: 'Inter', sans-serif; }
-    
-    .stApp {
-        background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #16213e 100%);
-    }
-    
-    .main-title {
-        text-align: center;
-        background: linear-gradient(90deg, #00d4ff, #7b2cbf);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 3rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        text-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
-    }
-    
-    .subtitle {
-        text-align: center;
-        color: #a0a0a0;
-        font-size: 1.1rem;
-        margin-bottom: 2rem;
-    }
-    
-    .stButton>button {
-        background: linear-gradient(90deg, #ff006e, #8338ec);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        padding: 0.75rem 2rem;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        width: 100%;
-    }
-    
-    .stButton>button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(255, 0, 110, 0.3);
-    }
-    
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 2rem;
-        background: rgba(255,255,255,0.05);
-        padding: 1rem;
-        border-radius: 15px;
-    }
-    
-    .question-card {
-        background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-        border-radius: 20px;
-        padding: 2rem;
-        margin: 1rem 0;
-        border: 1px solid rgba(255,255,255,0.1);
-        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    }
-    
-    .positive-message {
-        background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(123,44,191,0.2));
-        border-left: 4px solid #00d4ff;
-        padding: 1.5rem;
-        border-radius: 0 15px 15px 0;
-        margin: 1rem 0;
-        animation: glow 2s ease-in-out infinite alternate;
-    }
-    
-    @keyframes glow {
-        from { box-shadow: 0 0 10px rgba(0,212,255,0.2); }
-        to { box-shadow: 0 0 20px rgba(0,212,255,0.4); }
-    }
-    
-    .stProgress>div>div>div {
-        background: linear-gradient(90deg, #00d4ff, #7b2cbf);
-    }
+    .stApp { background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #16213e 100%); color: #ffffff !important; }
+    .stApp, .stApp p, .stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp label { color: #ffffff !important; }
+    .stTextInput>div>div>input, .stTextArea>div>div>textarea { background: rgba(255,255,255,0.1) !important; color: #ffffff !important; }
+    .main-title { text-align: center; background: linear-gradient(90deg, #00d4ff, #7b2cbf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 3rem; font-weight: 700; }
+    .subtitle { text-align: center; color: #a0a0a0 !important; font-size: 1.1rem; margin-bottom: 2rem; }
+    .stButton>button { background: linear-gradient(90deg, #ff006e, #8338ec) !important; color: white !important; border-radius: 10px !important; padding: 0.75rem !important; width: 100% !important; }
+    .question-card { background: rgba(255,255,255,0.1) !important; border-radius: 20px; padding: 2rem; margin: 1rem 0; border: 1px solid rgba(255,255,255,0.2); }
+    .question-card h3 { color: #ffffff !important; }
+    .nlp-card { background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(123,44,191,0.2)); border-radius: 20px; padding: 2rem; text-align: center; border: 2px solid rgba(0,212,255,0.5); animation: pulse 3s infinite; }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 0 20px rgba(0,212,255,0.3); } 50% { box-shadow: 0 0 40px rgba(0,212,255,0.6); } }
     </style>
     """, unsafe_allow_html=True)
 
 CATEGORIES = {
-    "Travmatik Olay": {"color": "#FF4757", "icon": "💥", "desc": "Geçmiş travmatik deneyimler"},
-    "Fobi": {"color": "#FF6348", "icon": "😰", "desc": "İrrasyonel korkular"},
-    "Kaygı": {"color": "#FFA502", "icon": "😰", "desc": "Anksiyete ve endişe"},
-    "Bağımlılık": {"color": "#2ED573", "icon": "🔄", "desc": "Bağımlılık davranışları"},
-    "İlişki": {"color": "#1E90FF", "icon": "💔", "desc": "İlişki sorunları"},
-    "Özgüven": {"color": "#A55EEA", "icon": "🪞", "desc": "Benlik saygısı"},
-    "Kayıp": {"color": "#747D8C", "icon": "🕯️", "desc": "Yas ve kayıp süreci"}
+    "Travmatik Olay": {"color": "#FF4757", "icon": "💥", "desc": "Geçmiş travmatik deneyimler", 
+                       "images": ["https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400", "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400"]},
+    "Fobi": {"color": "#FF6348", "icon": "😰", "desc": "İrrasyonel korkular",
+             "images": ["https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=400", "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400"]},
+    "Kaygı": {"color": "#FFA502", "icon": "😰", "desc": "Anksiyete ve endişe",
+              "images": ["https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400", "https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=400"]},
+    "Bağımlılık": {"color": "#2ED573", "icon": "🔄", "desc": "Bağımlılık davranışları",
+                   "images": ["https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?w=400", "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=400"]},
+    "İlişki": {"color": "#1E90FF", "icon": "💔", "desc": "İlişki sorunları",
+               "images": ["https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=400", "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=400"]},
+    "Özgüven": {"color": "#A55EEA", "icon": "🪞", "desc": "Benlik saygısı",
+                "images": ["https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400", "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400"]},
+    "Kayıp": {"color": "#747D8C", "icon": "🕯️", "desc": "Yas ve kayıp süreci",
+              "images": ["https://images.unsplash.com/photo-1519834785169-98be25ec3f84?w=400", "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=400"]}
 }
 
 QUESTION_BANK = {
     "Travmatik Olay": [
         {"type": "text", "question": "Bu olayı ilk hatırladığınızda bedeninizde nerede hissediyorsunuz?", "depth": 1},
-        {"type": "text", "question": "O anki düşünceniz şimdi gerçekçi mi görünüyor?", "depth": 2},
         {"type": "visual", "question": "Şu anki duygusal durumunuzu seçin:", "options": ["😢", "😠", "😨", "😔", "😐", "😌"], "depth": 1},
         {"type": "surprise", "question": "🌊 Mola: Derin nefes alın ve 3 saniye tutun.", "action": "breathe"},
         {"type": "text", "question": "Bu travmayı bir kitap olsa başlığı ne olurdu?", "depth": 2},
@@ -134,57 +64,49 @@ QUESTION_BANK = {
     "Fobi": [
         {"type": "text", "question": "Bu korku size ne zaman mantıklı geldi?", "depth": 1},
         {"type": "visual", "question": "Korkunuzu bir hava durumu olarak seçin:", "options": ["🌪️", "⛈️", "🌧️", "⛅", "🌤️", "☀️"], "depth": 2},
-        {"type": "surprise", "question": "🎲 Sürpriz: Gözlerinizi kapatın, korkunuzu balon gibi uçurun.", "action": "visualize"},
         {"type": "text", "question": "Bu fobi olmasaydı hayatınızda ne değişirdi?", "depth": 3},
     ],
     "Kaygı": [
         {"type": "text", "question": "Endişelendiğiniz şey gerçekleşti mi daha önce?", "depth": 1},
-        {"type": "visual", "question": "Kaygınızı bir renk olarak seçin:", "options": ["⚫", "🔴", "🟠", "🟡", "🔵", "⚪"], "depth": 1},
         {"type": "surprise", "question": "🧘 An: Şu an burada, şu an güvendesiniz.", "action": "grounding"},
         {"type": "text", "question": "Bu düşünce size hizmet ediyor mu?", "depth": 3},
     ],
     "Bağımlılık": [
         {"type": "text", "question": "Bu davranış size ilk ne hissettirdi?", "depth": 1},
         {"type": "visual", "question": "Özgür hissettiğiniz bir anı seçin:", "options": ["🕊️", "🦅", "🌊", "🏔️", "🌅", "🌲"], "depth": 2},
-        {"type": "surprise", "question": "💪 Güç Anı: Bugün kendinizle gurur duyduğunuz bir şey?", "action": "affirm"},
         {"type": "text", "question": "Kontrolü kaybettiğinizde kendinize ne söylüyorsunuz?", "depth": 2},
     ],
     "İlişki": [
         {"type": "text", "question": "Bu ilişkide kendi sınırlarınızı nasıl çizdiniz?", "depth": 2},
-        {"type": "visual", "question": "Sağlıklı ilişkiyi temsil eden görsel:", "options": ["🤝", "💝", "🌉", "🏡", "🌱", "⚖️"], "depth": 2},
         {"type": "surprise", "question": "❤️ Kendi Sevginiz: Kendinize nezaketle davrandınız mı?", "action": "selflove"},
         {"type": "text", "question": "Ayrılık acısı mı yoksa kalma acısı mı daha zor?", "depth": 2},
     ],
     "Özgüven": [
         {"type": "text", "question": "Kendinizi en son ne zaman yeterli hissettiniz?", "depth": 1},
         {"type": "visual", "question": "Güçlü hissettiğiniz bir anı seçin:", "options": ["💪", "👑", "🦁", "🔥", "⭐", "🎯"], "depth": 2},
-        {"type": "surprise", "question": "🌟 Yıldız Anı: Aynaya bakın ve kendinize gülümseyin.", "action": "mirror"},
         {"type": "text", "question": "Kendinizi eleştirdiğinizde bunu bir arkadaşınıza söyler miydiniz?", "depth": 2},
     ],
     "Kayıp": [
         {"type": "text", "question": "Kaybettiğiniz kişi size en değerli ne öğretti?", "depth": 2},
-        {"type": "visual", "question": "Anıları saklamak için bir sembol seçin:", "options": ["📦", "💎", "📚", "🖼️", "🕯️", "🌹"], "depth": 1},
         {"type": "surprise", "question": "🕯️ Anma: Kaybettiğiniz için bir dakika saygı duruşu.", "action": "remember"},
         {"type": "text", "question": "Kayıp sizi nasıl değiştirdi?", "depth": 3},
     ]
 }
 
 NLP_MESSAGES = {
-    "Travmatik Olay": ["Geçmişiniz sizi tanımlamaz, sadece güçlendirir.", "Hayatta kaldınız, şimdi yaşayın."],
-    "Fobi": ["Korku sadece bir düşüncedir.", "Cesaret korkuya rağmen hareket etmektir."],
-    "Kaygı": ["Gelecek hayal ürünüdür, şimdi gerçektir.", "Nefes alın, şu an güvendesiniz."],
-    "Bağımlılık": ["Her an yeni bir başlangıçtır.", "Kontrol sizdedir, her zaman."],
-    "İlişki": ["Kendi sevginiz en önemlisidir.", "Yalnızlık kötü bir ilişkiden iyidir."],
-    "Özgüven": ["Yeterlisiniz, olduğunuz gibi.", "Mükemmel olmak zorunda değilsiniz."],
-    "Kayıp": ["Aşk kaybolmaz, sadece şekil değiştirir.", "Anılar kalpte yaşar."]
+    "Travmatik Olay": ["Geçmişiniz sizi tanımlamaz, sadece güçlendirir.", "Hayatta kaldınız, şimdi yaşayın.", "Her yaradan gelen ışık daha parlaktır."],
+    "Fobi": ["Korku sadece bir düşüncedir.", "Cesaret korkuya rağmen hareket etmektir.", "Sınırlarınız zihninizdedir."],
+    "Kaygı": ["Gelecek hayal ürünüdür, şimdi gerçektir.", "Nefes alın, şu an güvendesiniz.", "Endişe geçicidir."],
+    "Bağımlılık": ["Her an yeni bir başlangıçtır.", "Kontrol sizdedir.", "Özgürlük seçimdir."],
+    "İlişki": ["Kendi sevginiz en önemlisidir.", "Sağlıklı sınırlar sağlıklı sevgidir.", "Yalnızlık kötü bir ilişkiden iyidir."],
+    "Özgüven": ["Yeterlisiniz, olduğunuz gibi.", "Mükemmel olmak zorunda değilsiniz.", "Kendinizin en iyi versiyonusunuz."],
+    "Kayıp": ["Aşk kaybolmaz, sadece şekil değiştirir.", "Yas sevginin devamıdır.", "Anılar kalpte yaşar."]
 }
 
 def init_session():
-    defaults = {
-        'user': "", 'category': None, 'intensity': 5, 'started': False,
-        'questions': [], 'answers': [], 'idx': 0, 'complete': False,
-        'visual': [], 'progress_data': []
-    }
+    defaults = {'user': "", 'user_email': "", 'category': None, 'intensity': 5, 'started': False,
+                'questions': [], 'answers': [], 'idx': 0, 'complete': False,
+                'visual': [], 'progress_data': [], 'show_report': False}
     for k, v in defaults.items():
         if k not in st.session_state:
             st.session_state[k] = v
@@ -194,31 +116,66 @@ def get_questions(cat):
         return []
     qs = QUESTION_BANK[cat].copy()
     random.shuffle(qs)
-    return qs[:5]
-
-def get_cat_color(cat):
-    return CATEGORIES.get(cat, {}).get("color", "#ffffff")
+    return qs[:4]
 
 def main():
     load_css()
     init_session()
     
+    # GİRİŞ EKRANI
+    if not st.session_state.user:
+        st.markdown("<h1 class='main-title'>🧠 UNLEARNING MACHINE</h1>", unsafe_allow_html=True)
+        st.markdown("<p class='subtitle'>NÖRAL YENİDEN YAPILANDIRMA PROTOKOLÜ</p>", unsafe_allow_html=True)
+        
+        st.markdown("<div class='question-card'>", unsafe_allow_html=True)
+        st.markdown("<h3>👤 Hoş Geldiniz</h3>", unsafe_allow_html=True)
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            name = st.text_input("İsminiz:", placeholder="örn: Ahmet")
+        with col2:
+            email = st.text_input("E-posta:", placeholder="ornek@email.com")
+        
+        if st.button("🚀 BAŞLA", use_container_width=True):
+            if name.strip() and email.strip():
+                st.session_state.user = name
+                st.session_state.user_email = email
+                st.rerun()
+            else:
+                st.error("Lütfen tüm alanları doldurun.")
+        
+        st.markdown("</div>", unsafe_allow_html=True)
+        return
+    
+    # Sidebar
     with st.sidebar:
-        st.markdown("<h2 style='text-align: center;'>🧠 KONTROL PANELİ</h2>", unsafe_allow_html=True)
-        if not st.session_state.user:
-            st.session_state.user = st.text_input("👤 İsminiz", value="Ziyaretçi")
-        else:
-            st.markdown(f"<p style='text-align: center;'>👤 {st.session_state.user}</p>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center; color: #ffffff !important;'>🧠 KONTROL PANELİ</h2>", unsafe_allow_html=True)
+        st.markdown(f"<p style='text-align: center; color: #ffffff !important;'>👤 {st.session_state.user}</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='text-align: center; color: #a0a0a0 !important; font-size: 0.8rem;'>{st.session_state.user_email}</p>", unsafe_allow_html=True)
         st.markdown("---")
+        
         if st.button("🆕 YENİ SEANS", use_container_width=True):
-            for k in ['started', 'complete', 'questions', 'answers', 'idx', 'visual', 'progress_data']:
-                st.session_state[k] = False if k in ['started', 'complete'] else ([] if k != 'idx' else 0)
+            for k in ['started', 'complete', 'questions', 'answers', 'idx', 'visual', 'progress_data', 'show_report']:
+                st.session_state[k] = False if k in ['started', 'complete', 'show_report'] else ([] if k != 'idx' else 0)
             st.rerun()
+        
         if st.button("📊 RAPORLARIM", use_container_width=True):
-            st.info("Raporlar seans sonunda oluşturulur.")
+            if st.session_state.complete:
+                st.session_state.show_report = True
+                st.rerun()
+        
+        if st.button("🚪 ÇIKIŞ", use_container_width=True):
+            st.session_state.user = ""
+            st.session_state.user_email = ""
+            st.rerun()
     
     st.markdown("<h1 class='main-title'>🧠 UNLEARNING MACHINE</h1>", unsafe_allow_html=True)
     st.markdown("<p class='subtitle'>NÖRAL YENİDEN YAPILANDIRMA PROTOKOLÜ</p>", unsafe_allow_html=True)
+    
+    # RAPOR EKRANI
+    if st.session_state.show_report and st.session_state.complete:
+        show_report_screen()
+        return
     
     tabs = st.tabs(["🎯 HEDEF", "💬 TERAPİ", "📊 İSTATİSTİKLER"])
     
@@ -227,19 +184,17 @@ def main():
             st.markdown("<div class='question-card'>", unsafe_allow_html=True)
             col1, col2 = st.columns(2)
             with col1:
-                cat = st.selectbox("KATEGORİ", list(CATEGORIES.keys()),
-                                 format_func=lambda x: f"{CATEGORIES[x]['icon']} {x}")
+                st.markdown("<h4 style='color: #ffffff !important;'>KATEGORİ</h4>", unsafe_allow_html=True)
+                cat = st.selectbox("", list(CATEGORIES.keys()), format_func=lambda x: f"{CATEGORIES[x]['icon']} {x}", label_visibility="collapsed")
                 st.session_state.category = cat
-                color = get_cat_color(cat)
-                st.markdown(f"<div style='background: {color}20; border-left: 4px solid {color}; padding: 1rem; border-radius: 0 10px 10px 0; margin-top: 1rem;'><strong style='color: {color};'>{CATEGORIES[cat]['desc']}</strong></div>", unsafe_allow_html=True)
+                color = CATEGORIES[cat]['color']
+                st.markdown(f"<div style='background: {color}20; border-left: 4px solid {color}; padding: 1rem; border-radius: 0 10px 10px 0;'><strong style='color: {color};'>{CATEGORIES[cat]['desc']}</strong></div>", unsafe_allow_html=True)
             with col2:
-                intensity = st.slider("DUYGU ŞİDDETİ (1-10)", 1, 10, st.session_state.intensity)
+                st.markdown("<h4 style='color: #ffffff !important;'>DUYGU ŞİDDETİ</h4>", unsafe_allow_html=True)
+                intensity = st.slider("", 1, 10, st.session_state.intensity, label_visibility="collapsed")
                 st.session_state.intensity = intensity
-                st.markdown(f"<h3 style='text-align: center; color: {color};'>{intensity}/10</h3>", unsafe_allow_html=True)
+                st.markdown(f"<h2 style='text-align: center; color: {color};'>{intensity}/10</h2>", unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
-            
-            detail = st.text_area("Bu durumu kısaca açıklayın (isteğe bağlı):", 
-                                 placeholder="Örn: Çocuklukta yaşadığım bir olay...", height=100)
             
             if st.button("🔒 HEDEFİ KİLİTLE", use_container_width=True):
                 st.session_state.started = True
@@ -247,15 +202,15 @@ def main():
                 st.rerun()
         else:
             cat = st.session_state.category
-            color = get_cat_color(cat)
-            st.markdown(f"<div style='background: {color}20; border: 2px solid {color}; padding: 2rem; border-radius: 15px; text-align: center;'><h2 style='color: {color}; margin: 0;'>{CATEGORIES[cat]['icon']} {cat}</h2><p>Başlangıç Şiddeti: <strong>{st.session_state.intensity}/10</strong></p></div>", unsafe_allow_html=True)
+            color = CATEGORIES[cat]['color']
+            st.markdown(f"<div style='background: {color}20; border: 2px solid {color}; padding: 2rem; border-radius: 15px; text-align: center;'><h2 style='color: {color}; margin: 0;'>{CATEGORIES[cat]['icon']} {cat}</h2><p style='color: #ffffff !important;'>Başlangıç: {st.session_state.intensity}/10</p></div>", unsafe_allow_html=True)
     
     with tabs[1]:
         if st.session_state.started and not st.session_state.complete:
             total = len(st.session_state.questions)
             current = st.session_state.idx
             st.progress(current / total if total > 0 else 0)
-            st.markdown(f"<p style='text-align: center;'>Soru {current + 1} / {total}</p>", unsafe_allow_html=True)
+            st.markdown(f"<p style='text-align: center; color: #ffffff !important;'>Soru {current + 1} / {total}</p>", unsafe_allow_html=True)
             
             if current < total:
                 q = st.session_state.questions[current]
@@ -266,26 +221,19 @@ def main():
                     for i, (col, opt) in enumerate(zip(cols, q['options'])):
                         with col:
                             if st.button(opt, key=f"v_{i}_{current}", use_container_width=True):
-                                st.session_state.visual.append({'q': q['question'], 'a': opt, 't': datetime.now().isoformat()})
+                                st.session_state.visual.append({'q': q['question'], 'a': opt})
                                 st.session_state.progress_data.append({'q': current, 'd': q.get('depth', 1)})
                                 st.session_state.idx += 1
                                 st.rerun()
                 
                 elif q['type'] == 'surprise':
-                    action = q.get('action', '')
-                    if action == 'breathe':
+                    if q.get('action') == 'breathe':
                         st.info("🫁 Nefes alın... 1... 2... 3... Verin...")
-                    elif action == 'visualize':
-                        st.info("🎈 Görselleştirin ve bırakın...")
-                    elif action == 'grounding':
+                    elif q.get('action') == 'grounding':
                         st.info("🦶 Ayaklarınızı hissedin...")
-                    elif action == 'affirm':
-                        st.success("💪 Güçlüsünüz!")
-                    elif action == 'selflove':
+                    elif q.get('action') == 'selflove':
                         st.success("❤️ Kendinizi sevin!")
-                    elif action == 'mirror':
-                        st.info("🪞 Aynaya bakın...")
-                    elif action == 'remember':
+                    elif q.get('action') == 'remember':
                         st.info("🕯️ Saygıyla anıyoruz...")
                     
                     if st.button("Devam Et ➡️", key=f"s_{current}"):
@@ -296,12 +244,7 @@ def main():
                     ans = st.text_area("Yanıtınız:", key=f"t_{current}", height=150)
                     if st.button("Gönder ✓", key=f"sub_{current}"):
                         if ans.strip():
-                            st.session_state.answers.append({
-                                'q': q['question'], 
-                                'a': ans, 
-                                'd': q.get('depth', 1),
-                                't': datetime.now().isoformat()
-                            })
+                            st.session_state.answers.append({'q': q['question'], 'a': ans, 'd': q.get('depth', 1)})
                             st.session_state.progress_data.append({'q': current, 'd': q.get('depth', 1)})
                             st.session_state.idx += 1
                             st.rerun()
@@ -312,90 +255,100 @@ def main():
                 st.rerun()
         
         elif st.session_state.complete:
-            cat = st.session_state.category
-            msgs = NLP_MESSAGES.get(cat, ["Güçlüsünüz."])
-            st.markdown("<div style='text-align: center; padding: 3rem 0;'>", unsafe_allow_html=True)
-            st.markdown("<h1 style='font-size: 3rem;'>🧘 NÖRAL YENİDEN YAPILANDIRMA</h1>", unsafe_allow_html=True)
-            st.markdown("<p style='font-size: 1.2rem; color: #a0a0a0;'>Beyninizi yeni kalıplara hazırlıyoruz...</p>", unsafe_allow_html=True)
-            
-            for msg in msgs:
-                st.markdown(f"<div class='positive-message'><h2>✨ {msg}</h2></div>", unsafe_allow_html=True)
-            
-            st.markdown("<div style='font-size: 5rem; text-align: center; margin: 2rem 0;'>🌅</div>", unsafe_allow_html=True)
-            st.markdown("<p style='text-align: center; font-size: 1.5rem; color: #00d4ff;'>Yeni başlangıçlar sizinle</p>", unsafe_allow_html=True)
-            
-            report = {
-                "tarih": datetime.now().strftime("%d.%m.%Y %H:%M"),
-                "kategori": cat,
-                "siddet_baslangic": st.session_state.intensity,
-                "siddet_bitis": max(1, st.session_state.intensity - 2),
-                "cevaplar": st.session_state.answers,
-                "gorsel_yanitlar": st.session_state.visual,
-                "ilerleme": st.session_state.progress_data
-            }
-            
-            encrypted_report = encrypt_data(report)
-            
-            col1, col2 = st.columns(2)
-            with col1:
-                st.download_button(
-                    label="📄 ŞİFRELİ RAPOR İNDİR",
-                    data=encrypted_report,
-                    file_name=f"seans_{datetime.now().strftime('%Y%m%d_%H%M')}.enc",
-                    mime="text/plain"
-                )
-            with col2:
-                if st.button("🔗 PAYLAŞ (ANONİM)"):
-                    st.success("Anonim link oluşturuldu!")
-            
-            with st.expander("🔓 Raporu Görüntüle"):
-                st.json(report)
-            
-            st.markdown("</div>", unsafe_allow_html=True)
-            
-            if st.button("🔄 YENİ SEANS BAŞLAT", use_container_width=True):
-                st.session_state.started = False
-                st.session_state.complete = False
-                st.session_state.questions = []
-                st.session_state.answers = []
-                st.session_state.idx = 0
-                st.session_state.visual = []
-                st.session_state.progress_data = []
-                st.rerun()
+            show_nlp_screen()
         else:
-            st.info("Lütfen önce HEDEF sekmesinden yeni bir seans başlatın.")
+            st.info("Lütfen önce HEDEF sekmesinden başlatın.")
     
     with tabs[2]:
         if st.session_state.answers or st.session_state.visual:
-            st.markdown("<h2>📊 SEANS İSTATİSTİKLERİ</h2>", unsafe_allow_html=True)
-            
+            st.markdown("<h2 style='color: #ffffff !important;'>📊 İSTATİSTİKLER</h2>", unsafe_allow_html=True)
             c1, c2, c3 = st.columns(3)
-            with c1:
-                st.metric("Toplam Yanıt", len(st.session_state.answers))
-            with c2:
-                depths = [a.get('d', 1) for a in st.session_state.answers]
-                avg_d = np.mean(depths) if depths else 0
-                st.metric("Ort. Derinlik", f"{avg_d:.1f}/3")
-            with c3:
-                st.metric("Görsel Yanıt", len(st.session_state.visual))
+            c1.metric("Yanıt", len(st.session_state.answers))
+            depths = [a.get('d', 1) for a in st.session_state.answers]
+            c2.metric("Derinlik", f"{np.mean(depths):.1f}" if depths else "0")
+            c3.metric("Görsel", len(st.session_state.visual))
             
             if st.session_state.progress_data:
-                df = pd.DataFrame([{'Soru': i+1, 'Derinlik': p['d']} for i, p in enumerate(st.session_state.progress_data)])
                 import plotly.express as px
-                fig = px.line(df, x='Soru', y='Derinlik', title='Soru Derinliği İlerlemesi', markers=True)
-                fig.update_traces(line_color='#00d4ff', marker_size=10)
+                df = pd.DataFrame([{'Soru': i+1, 'Derinlik': p['d']} for i, p in enumerate(st.session_state.progress_data)])
+                fig = px.line(df, x='Soru', y='Derinlik', markers=True)
+                fig.update_traces(line_color='#00d4ff')
                 fig.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', font_color='white')
                 st.plotly_chart(fig, use_container_width=True)
-            
-            if st.session_state.answers:
-                st.markdown("<h3>📝 Yanıt Özeti</h3>", unsafe_allow_html=True)
-                for i, a in enumerate(st.session_state.answers[:3], 1):
-                    with st.expander(f"Soru {i}: {a['q'][:50]}..."):
-                        st.write(f"**Soru:** {a['q']}")
-                        st.write(f"**Yanıt:** {a['a']}")
-                        st.write(f"**Derinlik:** {a.get('d', 1)}/3")
         else:
-            st.info("Henüz istatistik bulunmuyor. Bir seans tamamlayın.")
+            st.info("Henüz veri yok.")
+
+def show_nlp_screen():
+    """NLP Ekranı - Resimli"""
+    cat = st.session_state.category
+    msgs = NLP_MESSAGES.get(cat, ["Güçlüsünüz."])
+    images = CATEGORIES[cat]['images']
+    
+    st.markdown("<div style='text-align: center; padding: 2rem 0;'>", unsafe_allow_html=True)
+    st.markdown("<h1 style='color: #00d4ff !important;'>🧘 NÖRAL YENİDEN YAPILANDIRMA</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #a0a0a0 !important;'>Şimdi ekrana odaklanın...</p>", unsafe_allow_html=True)
+    
+    for i, (msg, img) in enumerate(zip(msgs, images)):
+        cols = st.columns([1, 2])
+        with cols[0]:
+            st.image(img, use_container_width=True)
+        with cols[1]:
+            st.markdown(f"<div class='nlp-card'><h2 style='color: #00d4ff !important;'>✨ {msg}</h2></div>", unsafe_allow_html=True)
+        st.markdown("<hr style='border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+    
+    if st.button("📊 SEANSI BİTİR VE RAPOR AL", use_container_width=True):
+        st.session_state.show_report = True
+        st.rerun()
+    
+    st.markdown("</div>", unsafe_allow_html=True)
+
+def show_report_screen():
+    """Rapor Ekranı"""
+    cat = st.session_state.category
+    
+    st.markdown("<div style='text-align: center; padding: 2rem 0;'>", unsafe_allow_html=True)
+    st.markdown("<h1 style='color: #00d4ff !important;'>📊 SEANS RAPORU</h1>", unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Kategori", cat)
+    col2.metric("Başlangıç", f"{st.session_state.intensity}/10")
+    col3.metric("Bitiş", f"{max(1, st.session_state.intensity - 2)}/10")
+    
+    report = {
+        "kullanici": st.session_state.user,
+        "email": st.session_state.user_email,
+        "tarih": datetime.now().strftime("%d.%m.%Y %H:%M"),
+        "kategori": cat,
+        "siddet_baslangic": st.session_state.intensity,
+        "siddet_bitis": max(1, st.session_state.intensity - 2),
+        "cevaplar": st.session_state.answers,
+        "gorsel_yanitlar": st.session_state.visual
+    }
+    
+    encrypted = encrypt_data(report)
+    
+    st.markdown("<br><h3 style='color: #ffffff !important;'>📥 Raporunuzu Alın</h3>", unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.download_button("💾 İNDİR", encrypted, f"seans_{st.session_state.user}_{datetime.now().strftime('%Y%m%d')}.enc", use_container_width=True)
+    with col2:
+        if st.button("🔗 PAYLAŞ", use_container_width=True):
+            st.code(f"https://unlearning-machine.streamlit.app/?r={encrypted[:30]}...", language="text")
+            st.success("Link oluşturuldu!")
+    with col3:
+        if st.button("📧 E-POSTA", use_container_width=True):
+            st.success(f"📧 {st.session_state.user_email} adresine gönderildi! (Demo)")
+    
+    with st.expander("📋 Detayları Gör"):
+        st.json(report)
+    
+    if st.button("🔄 YENİ SEANS", use_container_width=True):
+        for k in ['started', 'complete', 'questions', 'answers', 'idx', 'visual', 'progress_data', 'show_report']:
+            st.session_state[k] = False if k in ['started', 'complete', 'show_report'] else ([] if k != 'idx' else 0)
+        st.rerun()
+    
+    st.markdown("</div>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
